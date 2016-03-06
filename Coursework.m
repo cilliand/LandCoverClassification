@@ -14,15 +14,38 @@
     1 – building; 2 – vegetation; 3 – car; 4 – ground
 %}
 %% Loading images
+cd('C:\Development\Matlab\Visual Intelligence\Coursework 1\data\');
+load('ground_truth.mat');
+rgb = imread('data\rgb.bmp');
 r = imread('data\r.bmp');
 g = imread('data\g.bmp');
 b = imread('data\b.bmp');
 le = imread('data\le.bmp');
 fe = imread('data\fe.bmp');
 nir = imread('data\nir.bmp');
+%% Extract images from classified ground_truth
+gts = {labelled_ground_truth1, labelled_ground_truth2, labelled_ground_truth3,labelled_ground_truth4,labelled_ground_truth5,labelled_ground_truth6,labelled_ground_truth7};
+c = rgb2gray(rgb);
+for i = 1:7
+    figure;
+    pixel_labels = gts{i};
+    rgb_label = repmat(pixel_labels,[1 1 1]);
+    segmented_images_grountTrust = cell(1,4);
+    for k = 1:4
+            color = c;
+            color(rgb_label ~= k) = 0; %cols{k};
+            segmented_images_grountTrust{k} = color;
+            subplot(2,2,k);
+            imshow(segmented_images_grountTrust{k});
+    end
+end
+
+
 %% Testing k-means for feature selection
+cd('C:\Development\Matlab\Visual Intelligence\Coursework 1\');
 imgarray = {r,g,b,le,fe,nir};
 imgarraynames = {'red','green','blue','le','fe','nir'};
+
 for i = 1:numel(imgarray)
     img = imgarray{i};
     ab = double(img);
@@ -32,20 +55,16 @@ for i = 1:numel(imgarray)
    
     segmented_images = cell(1,4);
     rgb_label = repmat(pixel_labels,[1 1 1]);
+    
+    h = figure('Name',imgarraynames{i});
     for k = 1:4
         color = img;
         color(rgb_label ~= k) = 0;
         segmented_images{k} = color;
+        subplot(2,2,k);
+        imshow(segmented_images{k}), title(sprintf('objects in cluster %d',k));
     end
-    
-    h = figure('Name',imgarraynames{i});
-    subplot(2,2,1);
-    imshow(segmented_images{1}), title('objects in cluster 1');
-    subplot(2,2,2);
-    imshow(segmented_images{2}), title('objects in cluster 2');
-    subplot(2,2,3);
-    imshow(segmented_images{3}), title('objects in cluster 3');
-    subplot(2,2,4);
-    imshow(segmented_images{4}), title('objects in cluster 4');
-    saveas(h, strcat(pwd(),'\output\figures\',imgarraynames{i},'.jpg'));
+        saveas(h, strcat(pwd(),'\output\figures\',imgarraynames{i},'.jpg'));
 end
+
+
