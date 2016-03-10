@@ -1,3 +1,5 @@
+%%
+
 %% Classification of satellite image data %%
 %{
     Given 6 images files: r, g, b, nir, lidar fe, lidar le
@@ -23,8 +25,9 @@ b = imread('data\b.bmp');
 le = imread('data\le.bmp');
 fe = imread('data\fe.bmp');
 nir = imread('data\nir.bmp');
-%% Extract images from classified ground_truth
 gts = {labelled_ground_truth, labelled_ground_truth2, labelled_ground_truth3,labelled_ground_truth4,labelled_ground_truth5,labelled_ground_truth6,labelled_ground_truth7};
+%% Extract images from classified ground_truth
+
 c = rgb2gray(rgb);
 for i = 1:7
     figure;
@@ -67,4 +70,33 @@ for i = 1:numel(imgarray)
         saveas(h, strcat(pwd(),'\output\figures\',imgarraynames{i},'.jpg'));
 end
 
+%%
+% features = cell(6,20)
+% for i = 1:numel(gts)
+%     
+% end
+features1 = [r(26,19:38);g(26,19:38);b(26,19:38);nir(26,19:38);le(26,19:38);fe(26,19:38)];
+features2 = [r(19,6:25);g(19,6:25);b(19,6:25);nir(19,6:25);le(19,6:25);fe(19,6:25)];
+features3 = [r(210,29:38),r(209,29:37),r(208,30:30);g(210,29:38),g(209,29:37),g(208,30:30);b(210,29:38),b(209,29:37),b(208,30:30);nir(210,29:38),nir(209,29:37),nir(208,30:30);le(210,29:38),le(209,29:37),le(208,30:30);fe(210,29:38),fe(209,29:37),fe(208,30:30)];
+features4 = [r(1:20);g(1:20);b(1:20);nir(1:20);le(1:20);fe(1:20)];
+features1 = reshape(features1, [], 6);
+features2 = reshape(features2, [], 6);
+features3 = reshape(features3, [], 6);
+features4 = reshape(features4, [], 6);
 
+
+mean1 = mean(features1);
+mean2 = mean(features2);
+mean3 = mean(features3);
+mean4 = mean(features4);
+
+cov1 = cov(double(features1));
+cov2 = cov(double(features2));
+cov3 = cov(double(features3));
+cov4 = cov(double(features4));
+S = size(r);
+
+    pw1 = getPdfScores(test,mean1,cov1);
+    pw2 = getPdfScores(test,mean2,cov2);
+    pw3 = getPdfScores(test,mean3,cov3);
+    pw4 = getPdfScores(test,mean4,cov4);
