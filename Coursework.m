@@ -24,7 +24,7 @@ le = imread('data\le.bmp');
 fe = imread('data\fe.bmp');
 nir = imread('data\nir.bmp');
 %% Extract images from classified ground_truth
-gts = {labelled_ground_truth1, labelled_ground_truth2, labelled_ground_truth3,labelled_ground_truth4,labelled_ground_truth5,labelled_ground_truth6,labelled_ground_truth7};
+gts = {labelled_ground_truth, labelled_ground_truth2, labelled_ground_truth3,labelled_ground_truth4,labelled_ground_truth5,labelled_ground_truth6,labelled_ground_truth7};
 c = rgb2gray(rgb);
 for i = 1:7
     figure;
