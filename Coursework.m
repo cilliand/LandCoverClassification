@@ -25,6 +25,7 @@ b = imread('data\b.bmp');
 le = imread('data\le.bmp');
 fe = imread('data\fe.bmp');
 nir = imread('data\nir.bmp');
+imgarray = {r,g,b,le,fe,nir};
 gts = {labelled_ground_truth, labelled_ground_truth2, labelled_ground_truth3,labelled_ground_truth4,labelled_ground_truth5,labelled_ground_truth6,labelled_ground_truth7};
 %% Extract images from classified ground_truth
 
@@ -94,9 +95,44 @@ cov1 = cov(double(features1));
 cov2 = cov(double(features2));
 cov3 = cov(double(features3));
 cov4 = cov(double(features4));
-S = size(r);
 
-    pw1 = getPdfScores(test,mean1,cov1);
-    pw2 = getPdfScores(test,mean2,cov2);
-    pw3 = getPdfScores(test,mean3,cov3);
-    pw4 = getPdfScores(test,mean4,cov4);
+% pw1 = getPdfScores(test,mean1,cov1);
+% pw2 = getPdfScores(test,mean2,cov2);
+% pw3 = getPdfScores(test,mean3,cov3);
+% pw4 = getPdfScores(test,mean4,cov4);
+
+
+outputTest = cell(1,7);
+for z = 1:numel(imgarray)
+    currentImage = imgarray{z};
+    S = size(currentImage);
+    testOut = zeros(size(currentImage));
+    for i = 1:S(1)
+        for j = 1:S(2)
+            pw1 = getPdfScore(currentImage(i,j),mean1,cov1);
+            pw2 = getPdfScore(currentImage(i,j),mean2,cov2);
+            pw3 = getPdfScore(currentImage(i,j),mean3,cov3);
+            pw4 = getPdfScore(currentImage(i,j),mean4,cov4);
+            maxIt = [pw1,pw2,pw3,pw4];
+            [M, Idx] = max(maxIt);
+            testOut(i,j) = Idx;
+        end
+    end
+outputTest{1,z} = testOut;
+end
+%%
+ 
+c = rgb2gray(rgb);
+for i = 1:7
+    figure;
+    pixel_labels = outputTest{1,i};
+    rgb_label = repmat(pixel_labels,[1 1 1]);
+    segmented_images_grountTrust = cell(1,4);
+    for k = 1:4
+            color = c;
+            color(rgb_label ~= k) = 0; %cols{k};
+            segmented_images_grountTrust{k} = color;
+            subplot(2,2,k);
+            imshow(segmented_images_grountTrust{k});
+    end
+end
